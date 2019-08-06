@@ -63,7 +63,7 @@ export PASSWORD=changethis
 Use openssl to generate the "hashed" version of the password and store it in an environment variable
 
 ```
-export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
+export VC_HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
 ```
 
 Create an environment variable with the number of replicas for the Consul service (if you don't set it, by default it will be 3)
