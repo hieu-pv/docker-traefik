@@ -1,0 +1,47 @@
+version: "3"
+
+services:
+  traefik:
+    # The official v2.0 Traefik docker image
+    image: traefik:v2.0.0-rc1-alpine
+    networks:
+      - default
+      - vcrobot
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - "--api"
+      - "--providers.docker"
+      - "--entryPoints.http.address=:80"
+      - "--entryPoints.https.address=:443"
+      - "--certificatesresolvers.vcrobottlschallenge.acme.tlschallenge=true"
+      - "--certificatesresolvers.vcrobottlschallenge.acme.email=dev@vicoders.com"
+      - "--certificatesresolvers.vcrobottlschallenge.acme.storage=/letsencrypt/acme.json"
+      - "--log.filePath=/traefik.log"
+    ports:
+      # The HTTP port
+      - "80:80"
+      - "443:443"
+      # The Web UI (enabled by --api)
+      - "8080:8080"
+    volumes:
+      - ./letsencrypt:/letsencrypt
+      - ./logs/traefik.log:/traefik.log
+      - /var/run/docker.sock:/var/run/docker.sock
+  portainer:
+    image: portainer/portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainerdata:/data
+    networks:
+      - vcrobot
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=9000"
+      - "traefik.http.routers.portainer.entryPoints=http,https"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.local.com`)"
+
+networks:
+  vcrobot:
+    external: true
+volumes:
+  portainerdata:
