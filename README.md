@@ -26,7 +26,7 @@ But doing it in a way that allows you to have other Traefik services inside each
 Create a network that will be shared with Traefik and the containers that should be accessible from the outside
 
 ```
-docker network create --driver=overlay vcrobot
+docker network create --driver=overlay --attachable vcrobot
 ```
 
 Create an environment variable with your email, to be used for the generation of Let's Encrypt certificates
