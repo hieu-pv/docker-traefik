@@ -2,12 +2,12 @@
 
 Vicoders docker stack with Traefik as proxy service
 
-- [Vicoders Docker Traefik](#Vicoders-Docker-Traefik)
-  - [Overview](#Overview)
-  - [How it works](#How-it-works)
-  - [Installation Guide](#Installation-Guide)
-    - [Pre Install](#Pre-Install)
-    - [Install](#Install)
+- [Vicoders Docker Traefik](#vicoders-docker-traefik)
+  - [Overview](#overview)
+  - [How it works](#how-it-works)
+  - [Installation Guide](#installation-guide)
+    - [Pre Install](#pre-install)
+    - [Install](#install)
 
 ## Overview
 
@@ -26,7 +26,7 @@ But doing it in a way that allows you to have other Traefik services inside each
 Create a network that will be shared with Traefik and the containers that should be accessible from the outside
 
 ```
-docker network create --driver=overlay traefik-public
+docker network create --driver=overlay vcrobot
 ```
 
 Create an environment variable with your email, to be used for the generation of Let's Encrypt certificates
@@ -35,20 +35,10 @@ Create an environment variable with your email, to be used for the generation of
 export EMAIL=admin@example.com
 ```
 
-Create an environment variable with the domain you want to use for the Traefik UI (user interface) and the Consul UI of the host, e.g.:
+> You will access the Traefik UI at <your domain>:8080
+> You will access the Portainer UI at <your domain>:9000
 
-```
-export DOMAIN=example.com
-```
-
-> You will access the Traefik UI at traefik.<your domain>, e.g. traefik.example.com and the Consul UI at consul.<your domain>, e.g. consul.example.com.
-> So, make sure that your DNS records point traefik.<your domain> and consul.<your domain> to one of the IPs of the cluster.
-
-If you have several nodes (several IP addresses), you might want to create the DNS records for multiple of those IP addresses.
-
-That way, you would have redundancy even at the DNS level.
-
-Create an environment variable with a username (you will use it for the HTTP Basic Auth for Traefik and Consul UIs), for example:
+Create an environment variable with a username (you will use it for the HTTP Basic Auth for Traefik and Portainer), for example:
 
 ```
 export USERNAME=admin
@@ -66,56 +56,28 @@ Use openssl to generate the "hashed" version of the password and store it in an 
 export VC_HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
 ```
 
-Create an environment variable with the number of replicas for the Consul service (if you don't set it, by default it will be 3)
-
-```
-export CONSUL_REPLICAS=3
-```
-
-> If you have a single node, you can set CONSUL_REPLICAS to 0, that way you will only have the Consul "leader", you don't need the replicas if you don't have other nodes yet:
-
-So, for single node
-
-```
-export CONSUL_REPLICAS=0
-```
-
-Create an environment variable with the number of replicas for the Traefik service (if you don't set it, by default it will be 3)
-
-```
-export TRAEFIK_REPLICAS=3
-```
-
-If you have a single node, you can set TRAEFIK_REPLICAS to 1
-
-```
-export TRAEFIK_REPLICAS=1
-```
-
 ### Install
 
-Create the Docker Compose file
-
-With Jenkins
+Clone repository
 
 ```
-curl -L https://raw.githubusercontent.com/hieu-pv/docker-traefik/master/traefik.yml -o traefik.yml
+https://github.com/vcdocker/docker-traefik
 ```
 
-Without Jenkins
+Checkout 2.0 branch
 
 ```
-curl -L https://raw.githubusercontent.com/hieu-pv/docker-traefik/without_jenkins/traefik.yml -o traefik.yml
+git checkout 2.0
 ```
 
 Deploy the stack with
 
 ```
-docker stack deploy -c traefik.yml traefik-consul
+docker stack deploy -c docker-composer.yaml vcrobot
 ```
 
 Check if the stack was deployed with
 
 ```
-docker stack ps traefik-consul
+docker stack ps vcrobot
 ```

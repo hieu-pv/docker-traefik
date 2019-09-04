@@ -11,12 +11,19 @@ services:
     command:
       - "--api"
       - "--providers.docker"
+      - "--providers.docker.swarmMode=true"
+      - "--providers.docker.network=vcrobot"
+      - "--providers.docker.useBindPortIP=true"
+      - "--providers.docker.exposedByDefault=false"
       - "--entryPoints.http.address=:80"
       - "--entryPoints.https.address=:443"
       - "--certificatesresolvers.vcrobottlschallenge.acme.tlschallenge=true"
-      - "--certificatesresolvers.vcrobottlschallenge.acme.email=dev@vicoders.com"
+      - "--certificatesresolvers.vcrobottlschallenge.acme.email=${EMAIL?Variable EMAIL not set}"
       - "--certificatesresolvers.vcrobottlschallenge.acme.storage=/letsencrypt/acme.json"
       - "--log.filePath=/traefik.log"
+    deploy:
+      labels:
+        - "traefik.http.middlewares.traefikbasicauth.users=${USERNAME?Variable USERNAME not set}:${VC_HASHED_PASSWORD?Variable VC_HASHED_PASSWORD not set}"
     ports:
       # The HTTP port
       - "80:80"
@@ -29,6 +36,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
   portainer:
     image: portainer/portainer
+    ports:
+      - "9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainerdata:/data
@@ -38,7 +47,7 @@ services:
       - "traefik.enable=true"
       - "traefik.port=9000"
       - "traefik.http.routers.portainer.entryPoints=http,https"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.local.com`)"
+      - "traefik.http.middlewares.traefikbasicauth.users=${USERNAME?Variable USERNAME not set}:${VC_HASHED_PASSWORD?Variable VC_HASHED_PASSWORD not set}"
 
 networks:
   vcrobot:
