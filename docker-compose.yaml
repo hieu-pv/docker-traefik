@@ -17,9 +17,11 @@ services:
       - "--providers.docker.exposedByDefault=false"
       - "--entryPoints.http.address=:80"
       - "--entryPoints.https.address=:443"
-      - "--certificatesresolvers.vcrobottlschallenge.acme.tlschallenge=true"
+      - "--certificatesResolvers.vcrobottlschallenge.acme.httpChallenge=true"
+      - "--certificatesResolvers.vcrobottlschallenge.acme.httpChallenge.entryPoint=http"
       - "--certificatesresolvers.vcrobottlschallenge.acme.email=${EMAIL?Variable EMAIL not set}"
       - "--certificatesresolvers.vcrobottlschallenge.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesResolvers.vcrobottlschallenge.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--log.filePath=/traefik.log"
     deploy:
       labels:
