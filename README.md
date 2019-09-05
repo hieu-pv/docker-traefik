@@ -73,7 +73,7 @@ git checkout 2.0
 Deploy the stack with
 
 ```
-docker stack deploy -c docker-composer.yaml vcrobot
+docker stack deploy -c docker-compose.yaml vcrobot
 ```
 
 Check if the stack was deployed with
