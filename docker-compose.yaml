@@ -1,9 +1,9 @@
-version: "3"
+version: "3.7"
 
 services:
   traefik:
     # The official v2.0 Traefik docker image
-    image: traefik:v2.0.0-rc1-alpine
+    image: traefik:v2.0.0-rc2-alpine
     networks:
       - default
       - vcrobot
@@ -17,7 +17,6 @@ services:
       - "--providers.docker.exposedByDefault=false"
       - "--entryPoints.http.address=:80"
       - "--entryPoints.https.address=:443"
-      - "--configFile=/traefik.toml"
       - "--certificatesResolvers.vcrobottlschallenge.acme.httpChallenge=true"
       - "--certificatesResolvers.vcrobottlschallenge.acme.httpChallenge.entryPoint=http"
       - "--certificatesresolvers.vcrobottlschallenge.acme.email=${EMAIL?Variable EMAIL not set}"
@@ -35,7 +34,6 @@ services:
       - "8080:8080"
     volumes:
       - ./letsencrypt:/letsencrypt
-      - ./.config/traefik.toml:/traefik.toml
       - ./logs/traefik.log:/traefik.log
       - /var/run/docker.sock:/var/run/docker.sock
   portainer:
