@@ -24,6 +24,7 @@ services:
       - "--certificatesresolvers.vcrobothttpchallenge.acme.httpchallenge.entrypoint=http"
       - "--certificatesresolvers.vcrobothttpchallenge.acme.email=admin@vicoders.com"
       - "--certificatesresolvers.vcrobothttpchallenge.acme.storage=/letsencrypt/acme.json"
+      - "--configFile=/traefik.toml"
 
     ports:
       # The HTTP port
@@ -33,6 +34,7 @@ services:
       - "8080:8080"
     volumes:
       - ./letsencrypt:/letsencrypt
+      - ./.config/traefik.toml:/traefik.toml
       - ./logs/traefik.log:/traefik.log
       - /var/run/docker.sock:/var/run/docker.sock
   portainer:
@@ -44,11 +46,6 @@ services:
       - portainerdata:/data
     networks:
       - vcrobot
-    labels:
-      - "traefik.enable=true"
-      - "traefik.port=9000"
-      - "traefik.http.routers.portainer.entryPoints=http,https"
-      - "traefik.http.middlewares.traefikbasicauth.users=${USERNAME?Variable USERNAME not set}:${VC_HASHED_PASSWORD?Variable VC_HASHED_PASSWORD not set}"
 
 networks:
   vcrobot:
