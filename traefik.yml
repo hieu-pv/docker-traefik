@@ -11,14 +11,14 @@ services:
       - 'CONSUL_LOCAL_CONFIG={"leave_on_terminate": true}'
     networks:
       - default
-      - traefik-public
+      - vcrobot
     deploy:
       labels:
         - traefik.frontend.rule=Host:consul.${DOMAIN?Variable DOMAIN not set}
         - traefik.enable=true
         - traefik.port=8500
-        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
-        - traefik.docker.network=traefik-public
+        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-vcrobot}
+        - traefik.docker.network=vcrobot
         # Traefik service that listens to HTTP
         - traefik.redirectorservice.frontend.entryPoints=http
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
@@ -35,7 +35,7 @@ services:
       - 'CONSUL_LOCAL_CONFIG={"leave_on_terminate": true}'
     networks:
       - default
-      - traefik-public
+      - vcrobot
     deploy:
       replicas: ${CONSUL_REPLICAS:-3}
       placement:
@@ -50,14 +50,14 @@ services:
       - /home:/home
     networks:
       - default
-      - traefik-public
+      - vcrobot
     deploy:
       labels:
         - traefik.frontend.rule=Host:jenkins.${DOMAIN?Variable DOMAIN not set}
         - traefik.enable=true
         - traefik.port=8080
-        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
-        - traefik.docker.network=traefik-public
+        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-vcrobot}
+        - traefik.docker.network=vcrobot
         # Traefik service that listens to HTTP
         - traefik.redirectorservice.frontend.entryPoints=http
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
@@ -80,8 +80,8 @@ services:
         - traefik.frontend.rule=Host:traefik.${DOMAIN?Variable DOMAIN not set}
         - traefik.enable=true
         - traefik.port=8080
-        - traefik.tags=traefik-public
-        - traefik.docker.network=traefik-public
+        - traefik.tags=vcrobot
+        - traefik.docker.network=vcrobot
         # Traefik service that listens to HTTP
         - traefik.redirectorservice.frontend.entryPoints=http
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
@@ -95,7 +95,7 @@ services:
       --docker.swarmmode
       --docker.watch
       --docker.exposedbydefault=false
-      --constraints=tag==traefik-public
+      --constraints=tag==vcrobot
       --entrypoints='Name:http Address::80'
       --entrypoints='Name:https Address::443 TLS'
       --consul
@@ -112,7 +112,7 @@ services:
       --api
     networks:
       - default
-      - traefik-public
+      - vcrobot
     depends_on:
       - consul-leader
   portainer:
@@ -121,7 +121,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainerdata:/data
     networks:
-      - traefik-public
+      - vcrobot
     deploy:
       placement:
         constraints: [node.role == manager]
@@ -129,8 +129,8 @@ services:
         - traefik.frontend.rule=Host:portainer.${DOMAIN?Variable DOMAIN not set}
         - traefik.enable=true
         - traefik.port=9000
-        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-traefik-public}
-        - traefik.docker.network=traefik-public
+        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-vcrobot}
+        - traefik.docker.network=vcrobot
         # Traefik service that listens to HTTP
         - traefik.redirectorservice.frontend.entryPoints=http
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
@@ -144,5 +144,5 @@ volumes:
   portainerdata:
 
 networks:
-  traefik-public:
+  vcrobot:
     external: true

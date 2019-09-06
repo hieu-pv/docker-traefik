@@ -2,12 +2,12 @@
 
 Vicoders docker stack with Traefik as proxy service
 
-- [Vicoders Docker Traefik](#Vicoders-Docker-Traefik)
-  - [Overview](#Overview)
-  - [How it works](#How-it-works)
-  - [Installation Guide](#Installation-Guide)
-    - [Pre Install](#Pre-Install)
-    - [Install](#Install)
+- [Vicoders Docker Traefik](#vicoders-docker-traefik)
+  - [Overview](#overview)
+  - [How it works](#how-it-works)
+  - [Installation Guide](#installation-guide)
+    - [Pre Install](#pre-install)
+    - [Install](#install)
 
 ## Overview
 
@@ -26,7 +26,7 @@ But doing it in a way that allows you to have other Traefik services inside each
 Create a network that will be shared with Traefik and the containers that should be accessible from the outside
 
 ```
-docker network create --driver=overlay traefik-public
+docker network create --driver=overlay --attachable vcrobot
 ```
 
 Create an environment variable with your email, to be used for the generation of Let's Encrypt certificates
