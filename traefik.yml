@@ -37,32 +37,10 @@ services:
       - default
       - vcrobot
     deploy:
-      replicas: ${CONSUL_REPLICAS:-3}
+      replicas: ${CONSUL_REPLICAS:-0}
       placement:
         preferences:
           - spread: node.id
-
-  jenkins:
-    image: jenkinsci/blueocean
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /home:/home
-    networks:
-      - default
-      - vcrobot
-    deploy:
-      labels:
-        - traefik.frontend.rule=Host:jenkins.${DOMAIN?Variable DOMAIN not set}
-        - traefik.enable=true
-        - traefik.port=8080
-        - traefik.tags=${TRAEFIK_PUBLIC_TAG:-vcrobot}
-        - traefik.docker.network=vcrobot
-        # Traefik service that listens to HTTP
-        - traefik.redirectorservice.frontend.entryPoints=http
-        - traefik.redirectorservice.frontend.redirect.entryPoint=https
-        # Traefik service that listens to HTTPS
-        - traefik.webservice.frontend.entryPoints=https
 
   traefik:
     image: traefik:v1.7
@@ -70,7 +48,7 @@ services:
       - 80:80
       - 443:443
     deploy:
-      replicas: ${TRAEFIK_REPLICAS:-3}
+      replicas: ${TRAEFIK_REPLICAS:-1}
       placement:
         constraints:
           - node.role == manager
