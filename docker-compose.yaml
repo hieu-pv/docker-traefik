@@ -16,14 +16,15 @@ services:
       - "--providers.docker.useBindPortIP=true"
       - "--providers.docker.exposedByDefault=false"
       - "--certificatesResolvers.staging=true"
-      - "--certificatesResolvers.staging.acme.email=support@trajano.net"
-      - "--certificatesresolvers.staging.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesResolvers.staging.acme.httpchallenge=true"
-      - "--certificatesResolvers.staging.acme.httpchallenge.entryPoint=http"
-      - "--certificatesResolvers.staging.acme.storage=acme.json"
       - "--entryPoints.http.address=:80"
       - "--entryPoints.https.address=:443"
       - "--log.filePath=/traefik.log"
+      - "--log.level=DEBUG"
+      - "--certificatesresolvers.vcrobothttpchallenge.acme.httpchallenge=true"
+      - "--certificatesresolvers.vcrobothttpchallenge.acme.httpchallenge.entrypoint=http"
+      - "--certificatesresolvers.vcrobothttpchallenge.acme.email=admin@vicoders.com"
+      - "--certificatesresolvers.vcrobothttpchallenge.acme.storage=/letsencrypt/acme.json"
+
     ports:
       # The HTTP port
       - "80:80"
