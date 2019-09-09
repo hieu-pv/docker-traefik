@@ -22,7 +22,7 @@ services:
       - "--log.level=DEBUG"
       - "--certificatesresolvers.vcrobothttpchallenge.acme.httpchallenge=true"
       - "--certificatesresolvers.vcrobothttpchallenge.acme.httpchallenge.entrypoint=http"
-      - "--certificatesresolvers.vcrobothttpchallenge.acme.email=admin@vicoders.com"
+      - "--certificatesresolvers.vcrobothttpchallenge.acme.email=dev@vicoders.com"
       - "--certificatesresolvers.vcrobothttpchallenge.acme.storage=/letsencrypt/acme.json"
       - "--configFile=/traefik.toml"
 
