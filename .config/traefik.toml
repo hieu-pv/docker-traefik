@@ -21,7 +21,7 @@
   exposedByDefault = false
 
 # Enable ACME (Let's Encrypt): automatic SSL.
-[certificatesResolvers.vcrobothttpchallenge.acme]
+[certificatesResolvers.vcrobotresolver.acme]
 
   # Email address used for registration.
   #
