@@ -55,7 +55,7 @@ services:
         preferences:
           - spread: node.id
       labels:
-        - traefik.frontend.rule=Host:traefik.${DOMAIN?Variable DOMAIN not set}
+        - traefik.frontend.rule=Host:traefik.${DOMAIN:-local.com}
         - traefik.enable=true
         - traefik.port=8080
         - traefik.tags=vcrobot
@@ -79,7 +79,7 @@ services:
       --consul
       --consul.endpoint="consul-leader:8500"
       --acme
-      --acme.email=${EMAIL?Variable EMAIL not set}
+      --acme.email=${EMAIL:-admin@local.com}
       --acme.storage="traefik/acme/account"
       --acme.entryPoint=https
       --acme.httpChallenge.entryPoint=http
@@ -104,7 +104,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        - traefik.frontend.rule=Host:portainer.${DOMAIN?Variable DOMAIN not set}
+        - traefik.frontend.rule=Host:portainer.${DOMAIN:-local.com}
         - traefik.enable=true
         - traefik.port=9000
         - traefik.tags=${TRAEFIK_PUBLIC_TAG:-vcrobot}
