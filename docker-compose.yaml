@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  traefik:
+    # The official v2.0 Traefik docker image
+    image: traefik:v2.0.0-rc2-alpine
+    networks:
+      - default
+      - vcrobot
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - "--api"
+      - "--providers.docker"
+      - "--providers.docker.swarmMode=true"
+      - "--providers.docker.network=vcrobot"
+      - "--providers.docker.useBindPortIP=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--certificatesResolvers.staging=true"
+      - "--entryPoints.http.address=:80"
+      - "--entryPoints.https.address=:443"
+      - "--log.filePath=/traefik.log"
+      - "--log.level=DEBUG"
+      - "--configFile=/traefik.toml"
+
+    ports:
+      # The HTTP port
+      - "80:80"
+      - "443:443"
+      # The Web UI (enabled by --api)
+      - "8080:8080"
+    volumes:
+      - ./letsencrypt:/letsencrypt
+      - ./.config/traefik.toml:/traefik.toml
+      - ./logs/traefik.log:/traefik.log
+      - /var/run/docker.sock:/var/run/docker.sock
+  portainer:
+    image: portainer/portainer
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainerdata:/data
+    networks:
+      - vcrobot
+
+networks:
+  vcrobot:
+    external: true
+volumes:
+  portainerdata:
