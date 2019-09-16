@@ -1,38 +1,52 @@
-version: "3"
+version: "3.7"
 
 services:
   traefik:
-    # The official v2.0 Traefik docker image
     image: traefik:v2.0.0-rc2-alpine
+
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    command:
+      - --global.checknewversion=false
+      - --global.sendanonymoususage=false
+
+      - --accesslog
+      - --api
+      - --ping
+
+      - --certificatesresolvers.default.acme.httpchallenge.entrypoint=http
+      - --certificatesResolvers.default.acme.email=letsencrypt@vicoders.com
+      - --certificatesResolvers.default.acme.storage=/letsencrypt/acme.json
+
+      - --certificatesresolvers.staging.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.staging.acme.httpchallenge.entrypoint=http
+      - --certificatesResolvers.staging.acme.email=letsencrypt@vicoders.com
+      - --certificatesResolvers.staging.acme.storage=/letsencrypt/staging.json
+
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
+
+      - --providers.docker
+      - --providers.docker.swarmMode=true
+      - --providers.docker.network=vcrobot
+      - --providers.docker.useBindPortIP=true
+      - --providers.docker.exposedByDefault=false
+      - --log.level=DEBUG
+    volumes:
+      - ./letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - default
       - vcrobot
-    # Enables the web UI and tells Traefik to listen to docker
-    command:
-      - "--api"
-      - "--providers.docker"
-      - "--providers.docker.swarmMode=true"
-      - "--providers.docker.network=vcrobot"
-      - "--providers.docker.useBindPortIP=true"
-      - "--providers.docker.exposedByDefault=false"
-      - "--certificatesResolvers.staging=true"
-      - "--entryPoints.http.address=:80"
-      - "--entryPoints.https.address=:443"
-      - "--log.filePath=/traefik.log"
-      - "--log.level=DEBUG"
-      - "--configFile=/traefik.toml"
-
-    ports:
-      # The HTTP port
-      - "80:80"
-      - "443:443"
-      # The Web UI (enabled by --api)
-      - "8080:8080"
-    volumes:
-      - ./letsencrypt:/letsencrypt
-      - ./.config/traefik.toml:/traefik.toml
-      - ./logs/traefik.log:/traefik.log
-      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+      resources:
+        limits:
+          memory: 64M
+        reservations:
+          memory: 16M
   portainer:
     image: portainer/portainer
     ports:
