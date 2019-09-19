@@ -22,9 +22,9 @@ services:
       - "--providers.docker.useBindPortIP=true"
       - "--providers.docker.exposedByDefault=false"
 
-      - --certificatesresolvers.staging.acme.httpchallenge.entrypoint=http
-      - --certificatesResolvers.staging.acme.email=support@trajano.net
-      - --certificatesResolvers.staging.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.default.acme.httpchallenge.entrypoint=http
+      - --certificatesresolvers.default.acme.email=support@trajano.net
+      - --certificatesresolvers.default.acme.storage=/letsencrypt/acme.json
 
       - "--entrypoints.http.address=:80"
       - "--entrypoints.https.address=:443"
@@ -32,7 +32,7 @@ services:
       - --accesslog=true
       - --accesslog.filepath="/logs/access.log"
       - --accesslog.bufferingsize=5
-      - --accesslog.format="json"
+      - --accesslog.format=json
       - --accesslog.filters.statuscodes="200, 300-302"
       - --accesslog.filters.retryattempts
     volumes:
