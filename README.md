@@ -30,14 +30,7 @@ Create a network that will be shared with Traefik and the containers that should
 docker network create --driver=overlay --attachable vcrobot
 ```
 
-Create an environment variable with your email, to be used for the generation of Let's Encrypt certificates
-
-```
-export EMAIL=admin@example.com
-```
-
 > You will access the Traefik UI at <your domain>:8080
-> You will access the Portainer UI at <your domain>:9000
 
 Create an environment variable with a username (you will use it for the HTTP Basic Auth for Traefik and Portainer), for example:
 
@@ -63,6 +56,12 @@ Enable portainer
 
 ```
 export PORTAINER_DOMAIN=portainer.domain.com
+```
+
+Create an environment variable with your email, to be used for the generation of Let's Encrypt certificates
+
+```
+export ACME_EMAIL=acme@domain.com
 ```
 
 Enable traefik debug
