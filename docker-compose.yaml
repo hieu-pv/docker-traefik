@@ -9,32 +9,32 @@ services:
       - "443:443"
       - "8080:8080"
     command:
-      - "--global.checknewversion=false"
-      - "--global.sendanonymoususage=false"
-      - "--api=${ENABLE_TRAEFIK_API:-false}"
-      - "--api.dashboard=${ENABLE_TRAEFIK_API_DASHBOARD:-false}"
-      - "--api.insecure=${ENABLE_TRAEFIK_API_INSECURE:-false}"
-      - "--api.debug=true"
+      - --global.checknewversion=false
+      - --global.sendanonymoususage=false
+      - --api=${ENABLE_TRAEFIK_API:-false}
+      - --api.dashboard=${ENABLE_TRAEFIK_API_DASHBOARD:-false}
+      - --api.insecure=${ENABLE_TRAEFIK_API_INSECURE:-false}
+      - --api.debug=${TRAEFIK_DEBUGE:-false}
 
-      - "--providers.docker"
-      - "--providers.docker.swarmMode=true"
-      - "--providers.docker.network=vcrobot"
-      - "--providers.docker.useBindPortIP=true"
-      - "--providers.docker.exposedByDefault=false"
+      - --providers.docker
+      - --providers.docker.swarmMode=true
+      - --providers.docker.network=vcrobot
+      - --providers.docker.useBindPortIP=true
+      - --providers.docker.exposedByDefault=false
 
-      - "--certificatesresolvers.${ENABLE_TRAEFIK_CERT_RESOLVER:-staging}.acme.httpchallenge.entrypoint=http"
-      - "--certificatesresolvers.${ENABLE_TRAEFIK_CERT_RESOLVER:-staging}.acme.email=dev@vicoders.com"
-      - "--certificatesresolvers.${ENABLE_TRAEFIK_CERT_RESOLVER:-staging}.acme.storage=/letsencrypt/acme.json"
+      - --certificatesresolvers.${ENABLE_TRAEFIK_CERT_RESOLVER:-staging}.acme.httpchallenge.entrypoint=http
+      - --certificatesresolvers.${ENABLE_TRAEFIK_CERT_RESOLVER:-staging}.acme.email=dev@vicoders.com
+      - --certificatesresolvers.${ENABLE_TRAEFIK_CERT_RESOLVER:-staging}.acme.storage=/letsencrypt/acme.json
 
-      - "--entrypoints.http.address=:80"
-      - "--entrypoints.https.address=:443"
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
 
-      - "--accesslog=${ENABLE_TRAEFIK_ACCESS_LOG:-true}"
-      - "--accesslog.filepath=/logs/access.log"
-      - "--accesslog.bufferingsize=5"
-      - "--accesslog.format=json"
-      - "--accesslog.filters.statuscodes=200,300-302"
-      - "--accesslog.filters.retryattempts"
+      - --accesslog=${ENABLE_TRAEFIK_ACCESS_LOG:-true}
+      - --accesslog.filepath=/logs/access.log
+      - --accesslog.bufferingsize=5
+      - --accesslog.format=json
+      - --accesslog.filters.statuscodes=200,300-302
+      - --accesslog.filters.retryattempts
     volumes:
       - ./letsencrypt:/letsencrypt
       - ./logs:/logs
@@ -44,11 +44,11 @@ services:
       - vcrobot
     deploy:
       mode: global
-      labels:
-        - "traefik.http.routers.api.rule=PathPrefix(`/api`) || PathPrefix(`/dashboard`)"
-        - "traefik.http.routers.api.service=api@internal"
-        - "traefik.http.routers.api.middlewares=auth"
-        - "traefik.http.middlewares.auth.basicauth.users=${USERNAME?Variable USERNAME not set}:${VC_HASHED_PASSWORD?Variable VC_HASHED_PASSWORD not set}"
+      # labels:
+      #   - "traefik.http.routers.traefik_api.rule=PathPrefix(`/api`) || PathPrefix(`/dashboard`)"
+      #   - "traefik.http.routers.traefik_api.service=api@internal"
+      #   - "traefik.http.routers.traefik_api.middlewares=auth"
+      #   - "traefik.http.middlewares.auth.basicauth.users=${USERNAME?Variable USERNAME not set}:${VC_HASHED_PASSWORD?Variable VC_HASHED_PASSWORD not set}"
       resources:
         limits:
           memory: 64M

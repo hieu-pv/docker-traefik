@@ -59,9 +59,15 @@ export VC_HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
 
 ### Optional configuration
 
+Enable traefik debug
+
+```
+export TRAEFIK_DEBUGE=true
+```
+
 If you want to enable traefik API
 
-> Enable API in production is not recommendation https://docs.traefik.io/operations/api/#security
+> Enable API in production is not recommendation https://docs.traefik.io/operations/api/#security and you have to remove comment of deploy section in `docker-compose.yaml`
 
 ```
 export ENABLE_TRAEFIK_API=true
