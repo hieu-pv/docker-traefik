@@ -70,6 +70,18 @@ Checkout 2.0 branch
 git checkout 2.0
 ```
 
+Create acme.json file to store letsencrypt certificate and make sure it has permission is 600
+
+```
+touch letsencrypt/acme.json && chmod 600 letsencrypt/acme.json
+```
+
+Create access.log file if you enable access log
+
+```
+touch logs/access.log
+```
+
 Deploy the stack with
 
 ```
