@@ -56,11 +56,22 @@ services:
           memory: 16M
   portainer:
     image: portainer/portainer
-    ports:
-      - "9000:9000"
+    # ports:
+    #   - "9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainerdata:/data
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+        reservations:
+          memory: 16M
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.traefik-portainer.rule=Host(`${PORTAINER_DOMAIN?Variable PORTAINER_DOMAIN not set}`)"
+        - "traefik.http.routers.traefik-portainer.entryPoints=http"
+        - "traefik.http.services.traefik-portainer.loadbalancer.server.port=9000"
     networks:
       - vcrobot
 

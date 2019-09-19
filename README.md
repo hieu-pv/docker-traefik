@@ -59,6 +59,12 @@ export VC_HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
 
 ### Optional configuration
 
+Enable portainer
+
+```
+export PORTAINER_DOMAIN=portainer.domain.com
+```
+
 Enable traefik debug
 
 ```
