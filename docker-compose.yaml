@@ -22,9 +22,9 @@ services:
       - "--providers.docker.useBindPortIP=true"
       - "--providers.docker.exposedByDefault=false"
 
-      - --certificatesresolvers.default.acme.httpchallenge.entrypoint=http
-      - --certificatesresolvers.default.acme.email=support@trajano.net
-      - --certificatesresolvers.default.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.staging.acme.httpchallenge.entrypoint=http
+      - --certificatesresolvers.staging.acme.email=dev@vicoders.com
+      - --certificatesresolvers.staging.acme.storage=/letsencrypt/acme.json
 
       - "--entrypoints.http.address=:80"
       - "--entrypoints.https.address=:443"
