@@ -22,14 +22,10 @@ services:
       - "--providers.docker.useBindPortIP=true"
       - "--providers.docker.exposedByDefault=false"
 
-      - "--certificatesresolvers.default.acme.httpchallenge.entrypoint=http"
-      - "--certificatesResolvers.default.acme.email=letsencrypt@vicoders.com"
+      - "--certificatesResolvers.default.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesResolvers.default.acme.httpchallenge.entrypoint=http"
+      - "--certificatesResolvers.default.acme.email=dev@vicoders.com"
       - "--certificatesResolvers.default.acme.storage=/letsencrypt/acme.json"
-
-      - "--certificatesresolvers.staging.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.staging.acme.httpchallenge.entrypoint=http"
-      - "--certificatesResolvers.staging.acme.email=letsencrypt@vicoders.com"
-      - "--certificatesResolvers.staging.acme.storage=/letsencrypt/staging.json"
 
       - "--entrypoints.http.address=:80"
       - "--entrypoints.https.address=:443"
