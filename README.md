@@ -7,6 +7,7 @@ Vicoders docker stack with Traefik as proxy service
   - [How it works](#how-it-works)
   - [Installation Guide](#installation-guide)
     - [Pre Install](#pre-install)
+    - [Optional configuration](#optional-configuration)
     - [Install](#install)
 
 ## Overview
@@ -54,6 +55,40 @@ Use openssl to generate the "hashed" version of the password and store it in an 
 
 ```
 export VC_HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
+```
+
+### Optional configuration
+
+If you want to enable traefik API
+
+> Enable API in production is not recommendation https://docs.traefik.io/operations/api/#security
+
+```
+export ENABLE_TRAEFIK_API=true
+```
+
+If you want to enable traefik API dashboard
+
+```
+export ENABLE_TRAEFIK_API_DASHBOARD=true
+```
+
+Set insecure mode for api dashboard https://docs.traefik.io/operations/api/#insecure
+
+```
+export ENABLE_TRAEFIK_API_INSECURE=true
+```
+
+Set name for cert resolver https://docs.traefik.io/routing/routers/#certresolver
+
+```
+export ENABLE_TRAEFIK_CERT_RESOLVER=staging
+```
+
+Enable access log https://docs.traefik.io/observability/access-logs/
+
+```
+export ENABLE_TRAEFIK_ACCESS_LOG=true
 ```
 
 ### Install
