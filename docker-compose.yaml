@@ -2,46 +2,58 @@ version: "3.7"
 
 services:
   traefik:
-    image: traefik:v2.0.0-rc2-alpine
+    image: traefik:v2.0
 
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
     command:
-      - --global.checknewversion=false
-      - --global.sendanonymoususage=false
+      - "--global.checknewversion=false"
+      - "--global.sendanonymoususage=false"
+      - "--api=true"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--api.debug=true"
 
-      - --accesslog
-      - --api
-      - --ping
+      - "--providers.docker"
+      - "--providers.docker.swarmMode=true"
+      - "--providers.docker.network=vcrobot"
+      - "--providers.docker.useBindPortIP=true"
+      - "--providers.docker.exposedByDefault=false"
 
-      - --certificatesresolvers.default.acme.httpchallenge.entrypoint=http
-      - --certificatesResolvers.default.acme.email=letsencrypt@vicoders.com
-      - --certificatesResolvers.default.acme.storage=/letsencrypt/acme.json
+      - "--certificatesresolvers.default.acme.httpchallenge.entrypoint=http"
+      - "--certificatesResolvers.default.acme.email=letsencrypt@vicoders.com"
+      - "--certificatesResolvers.default.acme.storage=/letsencrypt/acme.json"
 
-      - --certificatesresolvers.staging.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
-      - --certificatesresolvers.staging.acme.httpchallenge.entrypoint=http
-      - --certificatesResolvers.staging.acme.email=letsencrypt@vicoders.com
-      - --certificatesResolvers.staging.acme.storage=/letsencrypt/staging.json
+      - "--certificatesresolvers.staging.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.staging.acme.httpchallenge.entrypoint=http"
+      - "--certificatesResolvers.staging.acme.email=letsencrypt@vicoders.com"
+      - "--certificatesResolvers.staging.acme.storage=/letsencrypt/staging.json"
 
-      - --entrypoints.http.address=:80
-      - --entrypoints.https.address=:443
+      - "--entrypoints.http.address=:80"
+      - "--entrypoints.https.address=:443"
 
-      - --providers.docker
-      - --providers.docker.swarmMode=true
-      - --providers.docker.network=vcrobot
-      - --providers.docker.useBindPortIP=true
-      - --providers.docker.exposedByDefault=false
-      - --log.level=DEBUG
+      - --accesslog=true
+      - --accesslog.filepath="/logs/access.log"
+      - --accesslog.bufferingsize=5
+      - --accesslog.format="json"
+      - --accesslog.filters.statuscodes="200, 300-302"
+      - --accesslog.filters.retryattempts
     volumes:
       - ./letsencrypt:/letsencrypt
+      - ./logs:/logs
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - default
       - vcrobot
     deploy:
       mode: global
+      labels:
+        - "traefik.http.routers.api.rule=PathPrefix(`/api`) || PathPrefix(`/dashboard`)"
+        - "traefik.http.routers.api.service=api@internal"
+        # - "traefik.http.routers.api.middlewares=auth"
+        # - "traefik.http.middlewares.auth.basicauth.users=test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/,test2:$$apr1$$d9hr9HBB$$4HxwgUir3HP4EsggP/QNo0"
       resources:
         limits:
           memory: 64M
