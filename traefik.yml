@@ -1,4 +1,4 @@
-version: '3.3'
+version: "3.3"
 
 services:
   consul-leader:
@@ -14,7 +14,7 @@ services:
       - vcrobot
     deploy:
       labels:
-        - traefik.frontend.rule=Host:consul.${DOMAIN?Variable DOMAIN not set}
+        - traefik.frontend.rule=Host:consul.${DOMAIN:-local.com}
         - traefik.enable=true
         - traefik.port=8500
         - traefik.tags=${TRAEFIK_PUBLIC_TAG:-vcrobot}
@@ -22,9 +22,8 @@ services:
         # Traefik service that listens to HTTP
         - traefik.redirectorservice.frontend.entryPoints=http
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
-        # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
-        - traefik.frontend.auth.basic.users=${USERNAME?Variable USERNAME not set}:${VC_HASHED_PASSWORD?Variable VC_HASHED_PASSWORD not set}
+        # - traefik.frontend.auth.basic.users=${USERNAME?Variable USERNAME not set}:${VC_HASHED_PASSWORD?Variable VC_HASHED_PASSWORD not set}
   consul-replica:
     image: consul
     command: agent -server -client=0.0.0.0 -retry-join="consul-leader"
@@ -55,7 +54,7 @@ services:
         preferences:
           - spread: node.id
       labels:
-        - traefik.frontend.rule=Host:traefik.${DOMAIN?Variable DOMAIN not set}
+        - traefik.frontend.rule=Host:traefik.${DOMAIN:-local.com}
         - traefik.enable=true
         - traefik.port=8080
         - traefik.tags=vcrobot
@@ -65,7 +64,7 @@ services:
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
-        - traefik.frontend.auth.basic.users=${USERNAME?Variable USERNAME not set}:${VC_HASHED_PASSWORD?Variable VC_HASHED_PASSWORD not set}
+        # - traefik.frontend.auth.basic.users=${USERNAME?Variable USERNAME not set}:${VC_HASHED_PASSWORD?Variable VC_HASHED_PASSWORD not set}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: >
@@ -79,7 +78,7 @@ services:
       --consul
       --consul.endpoint="consul-leader:8500"
       --acme
-      --acme.email=${EMAIL?Variable EMAIL not set}
+      --acme.email=${EMAIL:-admin@local.com}
       --acme.storage="traefik/acme/account"
       --acme.entryPoint=https
       --acme.httpChallenge.entryPoint=http
@@ -104,7 +103,7 @@ services:
       placement:
         constraints: [node.role == manager]
       labels:
-        - traefik.frontend.rule=Host:portainer.${DOMAIN?Variable DOMAIN not set}
+        - traefik.frontend.rule=Host:portainer.${DOMAIN:-local.com}
         - traefik.enable=true
         - traefik.port=9000
         - traefik.tags=${TRAEFIK_PUBLIC_TAG:-vcrobot}
@@ -114,7 +113,7 @@ services:
         - traefik.redirectorservice.frontend.redirect.entryPoint=https
         # Traefik service that listens to HTTPS
         - traefik.webservice.frontend.entryPoints=https
-        
+
 volumes:
   consul-data-leader:
   consul-data-replica:

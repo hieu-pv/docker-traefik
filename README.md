@@ -7,6 +7,7 @@ Vicoders docker stack with Traefik as proxy service
   - [How it works](#how-it-works)
   - [Installation Guide](#installation-guide)
     - [Pre Install](#pre-install)
+    - [Optional configuration](#optional-configuration)
     - [Install](#install)
 
 ## Overview
@@ -29,26 +30,9 @@ Create a network that will be shared with Traefik and the containers that should
 docker network create --driver=overlay --attachable vcrobot
 ```
 
-Create an environment variable with your email, to be used for the generation of Let's Encrypt certificates
+> You will access the Traefik UI at <your domain>:8080
 
-```
-export EMAIL=admin@example.com
-```
-
-Create an environment variable with the domain you want to use for the Traefik UI (user interface) and the Consul UI of the host, e.g.:
-
-```
-export DOMAIN=example.com
-```
-
-> You will access the Traefik UI at traefik.<your domain>, e.g. traefik.example.com and the Consul UI at consul.<your domain>, e.g. consul.example.com.
-> So, make sure that your DNS records point traefik.<your domain> and consul.<your domain> to one of the IPs of the cluster.
-
-If you have several nodes (several IP addresses), you might want to create the DNS records for multiple of those IP addresses.
-
-That way, you would have redundancy even at the DNS level.
-
-Create an environment variable with a username (you will use it for the HTTP Basic Auth for Traefik and Consul UIs), for example:
+Create an environment variable with a username (you will use it for the HTTP Basic Auth for Traefik and Portainer), for example:
 
 ```
 export USERNAME=admin
@@ -63,59 +47,95 @@ export PASSWORD=changethis
 Use openssl to generate the "hashed" version of the password and store it in an environment variable
 
 ```
-export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
+export VC_HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
 ```
 
-Create an environment variable with the number of replicas for the Consul service (if you don't set it, by default it will be 3)
+### Optional configuration
+
+Enable portainer
 
 ```
-export CONSUL_REPLICAS=3
+export PORTAINER_DOMAIN=portainer.domain.com
 ```
 
-> If you have a single node, you can set CONSUL_REPLICAS to 0, that way you will only have the Consul "leader", you don't need the replicas if you don't have other nodes yet:
-
-So, for single node
+Create an environment variable with your email, to be used for the generation of Let's Encrypt certificates
 
 ```
-export CONSUL_REPLICAS=0
+export ACME_EMAIL=acme@domain.com
 ```
 
-Create an environment variable with the number of replicas for the Traefik service (if you don't set it, by default it will be 3)
+Enable traefik debug
 
 ```
-export TRAEFIK_REPLICAS=3
+export TRAEFIK_DEBUGE=true
 ```
 
-If you have a single node, you can set TRAEFIK_REPLICAS to 1
+If you want to enable traefik API
+
+> Enable API in production is not recommendation https://docs.traefik.io/operations/api/#security and you have to remove comment of deploy section in `docker-compose.yaml`
 
 ```
-export TRAEFIK_REPLICAS=1
+export ENABLE_TRAEFIK_API=true
+```
+
+If you want to enable traefik API dashboard
+
+```
+export ENABLE_TRAEFIK_API_DASHBOARD=true
+```
+
+Set insecure mode for api dashboard https://docs.traefik.io/operations/api/#insecure
+
+```
+export ENABLE_TRAEFIK_API_INSECURE=true
+```
+
+Set name for cert resolver https://docs.traefik.io/routing/routers/#certresolver
+
+```
+export ENABLE_TRAEFIK_CERT_RESOLVER=staging
+```
+
+Enable access log https://docs.traefik.io/observability/access-logs/
+
+```
+export ENABLE_TRAEFIK_ACCESS_LOG=true
 ```
 
 ### Install
 
-Create the Docker Compose file
-
-With Jenkins
+Clone repository
 
 ```
-curl -L https://raw.githubusercontent.com/hieu-pv/docker-traefik/master/traefik.yml -o traefik.yml
+https://github.com/vcdocker/docker-traefik
 ```
 
-Without Jenkins
+Checkout 2.0 branch
 
 ```
-curl -L https://raw.githubusercontent.com/hieu-pv/docker-traefik/without_jenkins/traefik.yml -o traefik.yml
+git checkout 2.0
+```
+
+Create acme.json file to store letsencrypt certificate and make sure it has permission is 600
+
+```
+touch letsencrypt/acme.json && chmod 600 letsencrypt/acme.json
+```
+
+Create access.log file if you enable access log
+
+```
+touch logs/access.log
 ```
 
 Deploy the stack with
 
 ```
-docker stack deploy -c traefik.yml traefik-consul
+docker stack deploy -c docker-compose.yaml vcrobot
 ```
 
 Check if the stack was deployed with
 
 ```
-docker stack ps traefik-consul
+docker stack ps vcrobot
 ```
