@@ -32,22 +32,22 @@ docker network create --driver=overlay --attachable vcrobot
 
 > You will access the Traefik UI at <your domain>:8080
 
-Create an environment variable with a username (you will use it for the HTTP Basic Auth for Traefik and Portainer), for example:
+Create an environment variable with a VC_USER (you will use it for the HTTP Basic Auth for Traefik and Portainer), for example:
 
 ```
-export USERNAME=admin
+export VC_USER=admin
 ```
 
 Create an environment variable with the password, e.g.
 
 ```
-export PASSWORD=changethis
+export VC_PASSWORD=changethis
 ```
 
 Use openssl to generate the "hashed" version of the password and store it in an environment variable
 
 ```
-export VC_HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
+export VC_BASIC_AUTH=$(htpasswd -nb $VC_USER $VC_PASSWORD)
 ```
 
 ### Optional configuration

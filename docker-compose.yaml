@@ -8,6 +8,7 @@ services:
       - "80:80"
       - "443:443"
       - "8080:8080"
+      - "9000:9000"
     command:
       - --global.checknewversion=false
       - --global.sendanonymoususage=false
@@ -28,6 +29,8 @@ services:
 
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
+      - --entrypoints.portainer.address=:9000
+      - --entrypoints.traefik.address=:8080
 
       - --accesslog=${ENABLE_TRAEFIK_ACCESS_LOG:-true}
       - --accesslog.filepath=/logs/access.log
@@ -45,19 +48,20 @@ services:
     deploy:
       mode: global
       labels:
-        - "traefik.http.routers.traefik_api.rule=PathPrefix(`/api`) || PathPrefix(`/dashboard`)"
-        - "traefik.http.routers.traefik_api.service=api@internal"
-        - "traefik.http.routers.traefik_api.middlewares=auth"
-        - "traefik.http.middlewares.auth.basicauth.users=${USERNAME?Variable USERNAME not set}:${VC_HASHED_PASSWORD?Variable VC_HASHED_PASSWORD not set}"
+        - "traefik.enable=true"
+        - "traefik.http.routers.traefik-api.rule=Path(`/`, `/{any:.+}`)"
+        - "traefik.http.routers.traefik-api.service=api@internal"
+        - "traefik.http.routers.traefik-api.entryPoints=traefik"
+        - "traefik.http.services.traefik-api.loadbalancer.server.port=8080"
+        - "traefik.http.routers.traefik-api.middlewares=auth"
+        - "traefik.http.middlewares.auth.basicauth.users=${VC_BASIC_AUTH?Variable VC_BASIC_AUTH not set}"
       resources:
         limits:
-          memory: 64M
+          memory: 128M
         reservations:
-          memory: 16M
+          memory: 64M
   portainer:
     image: portainer/portainer
-    # ports:
-    #   - "9000:9000"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainerdata:/data
@@ -69,9 +73,11 @@ services:
           memory: 16M
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.traefik-portainer.rule=Host(`${PORTAINER_DOMAIN?Variable PORTAINER_DOMAIN not set}`)"
-        - "traefik.http.routers.traefik-portainer.entryPoints=http"
+        - "traefik.http.routers.traefik-portainer.rule=Path(`/`, `/{any:.+}`)"
+        - "traefik.http.routers.traefik-portainer.entryPoints=portainer"
         - "traefik.http.services.traefik-portainer.loadbalancer.server.port=9000"
+        # - "traefik.http.routers.traefik-portainer.middlewares=portainer-auth"
+        # - "traefik.http.middlewares.portainer-auth.basicauth.users=${VC_BASIC_AUTH?Variable VC_BASIC_AUTH not set}"
     networks:
       - vcrobot
 
