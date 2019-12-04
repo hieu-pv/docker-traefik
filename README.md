@@ -46,6 +46,8 @@ export VC_PASSWORD=changethis
 
 Use openssl to generate the "hashed" version of the password and store it in an environment variable
 
+> if htpasswd command not found, you can install extra package to use it `yum install httpd-tools`
+
 ```
 export VC_BASIC_AUTH=$(htpasswd -nb $VC_USER $VC_PASSWORD)
 ```
