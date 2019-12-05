@@ -54,12 +54,6 @@ export VC_BASIC_AUTH=$(htpasswd -nb $VC_USER $VC_PASSWORD)
 
 ### Optional configuration
 
-Enable portainer
-
-```
-export PORTAINER_DOMAIN=portainer.domain.com
-```
-
 Create an environment variable with your email, to be used for the generation of Let's Encrypt certificates
 
 ```
