@@ -78,8 +78,8 @@ services:
         - "traefik.http.routers.traefik-portainer.rule=Path(`/`, `/{any:.+}`)"
         - "traefik.http.routers.traefik-portainer.entryPoints=portainer"
         - "traefik.http.services.traefik-portainer.loadbalancer.server.port=9000"
-        - "traefik.http.routers.traefik-portainer.middlewares=portainer-auth"
-        - "traefik.http.middlewares.portainer-auth.basicauth.users=${VC_BASIC_AUTH?Variable VC_BASIC_AUTH not set}"
+#        - "traefik.http.routers.traefik-portainer.middlewares=portainer-auth"
+#        - "traefik.http.middlewares.portainer-auth.basicauth.users=${VC_BASIC_AUTH?Variable VC_BASIC_AUTH not set}"
     networks:
       - vcrobot
 
