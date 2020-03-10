@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   traefik:
-    image: traefik:v2.0
+    image: traefik:v2.2
 
     ports:
       - "80:80"
@@ -28,7 +28,9 @@ services:
       - --certificatesresolvers.${ENABLE_TRAEFIK_CERT_RESOLVER:-staging}.acme.storage=/letsencrypt/acme.json
 
       - --entrypoints.http.address=:80
+      - --entryPoints.http.forwardedHeaders.insecure
       - --entrypoints.https.address=:443
+      - --entryPoints.https.forwardedHeaders.insecure
       - --entrypoints.portainer.address=:9000
       - --entrypoints.traefik.address=:8080
 
